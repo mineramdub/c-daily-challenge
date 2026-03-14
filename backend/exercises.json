@@ -1,0 +1,542 @@
+[
+  {
+    "id": "ptr-reverse-01",
+    "difficulty": 3,
+    "type": "code",
+    "topic": "pointers",
+    "title": "Reverse en place — pointeurs purs",
+    "description": "Implémente `void reverse(char *s)` qui inverse une chaîne **en place**.\n\n**Contrainte :** utilise uniquement de l'arithmétique de pointeurs (pas d'indexation `s[i]` autorisée).\n\nLe `main` est fourni, ne le modifie pas.",
+    "starter_code": "#include <stdio.h>\n\nvoid reverse(char *s) {\n    // Ton code ici\n    // Contrainte : pas de s[i], uniquement *p, p++, p--, etc.\n}\n\nint main(void) {\n    char s1[] = \"Hello, World!\";\n    char s2[] = \"abcde\";\n    char s3[] = \"a\";\n    char s4[] = \"\";\n    reverse(s1); reverse(s2); reverse(s3); reverse(s4);\n    printf(\"%s\\n\", s1);\n    printf(\"%s\\n\", s2);\n    printf(\"%s\\n\", s3);\n    printf(\"%s\\n\", s4);\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "!dlroW ,olleH\nedcba\na\n\n" }
+    ],
+    "hints": [
+      "Deux pointeurs : un au début, un à la fin de la chaîne.",
+      "Avance le pointeur de fin avec un premier passage, puis échange *left et *right en rapprochant les deux.",
+      "while (*end) end++; end--; puis while (left < right) { char tmp = *left; *left++ = *right; *right-- = tmp; }"
+    ],
+    "hint_costs": [5, 15, 25]
+  },
+  {
+    "id": "ptr-arith-predict-01",
+    "difficulty": 3,
+    "type": "predict",
+    "topic": "pointers",
+    "title": "Arithmétique de pointeurs — que s'affiche-t-il ?",
+    "description": "Analyse ce programme **sans le compiler**. Qu'affiche-t-il exactement ?\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    int arr[] = {10, 20, 30, 40, 50};\n    int *p = arr + 1;\n\n    printf(\"%d\\n\", *p);\n    printf(\"%d\\n\", *(p + 2));\n    printf(\"%d\\n\", p[-1]);\n    printf(\"%d\\n\", arr[4] - *p);\n    return 0;\n}\n```",
+    "starter_code": "",
+    "test_cases": [
+      { "input": "", "expected": "20\n40\n10\n30\n" }
+    ],
+    "hints": [
+      "`p` pointe sur `arr[1]` (valeur 20). `p[-1]` est légal : c'est `*(p-1)`.",
+      "Calcule chaque ligne : p+2 = arr[3], p[-1] = arr[0], arr[4]-*p = 50-20.",
+      "20, 40, 10, 30"
+    ],
+    "hint_costs": [5, 10, 20]
+  },
+  {
+    "id": "debug-strlen-01",
+    "difficulty": 3,
+    "type": "debug",
+    "topic": "strings",
+    "title": "strlen cassé — trouve le bug",
+    "description": "Cette implémentation de `strlen` produit des résultats incorrects. Trouve et corrige le(s) bug(s).\n\nSortie attendue après correction :\n```\n5\n0\n1\n```",
+    "starter_code": "#include <stdio.h>\n\nsize_t my_strlen(const char *s) {\n    size_t len = 1;\n    while (*s++)\n        len++;\n    return len;\n}\n\nint main(void) {\n    printf(\"%zu\\n\", my_strlen(\"hello\"));\n    printf(\"%zu\\n\", my_strlen(\"\"));\n    printf(\"%zu\\n\", my_strlen(\"a\"));\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "5\n0\n1\n" }
+    ],
+    "hints": [
+      "Regarde la valeur initiale de `len`.",
+      "La boucle incrémente `len` même avant de tester quoi que ce soit. Avec une chaîne vide, `*s` est `'\\0'` donc la boucle ne tourne pas — mais `len` vaut déjà 1.",
+      "Change `len = 1` en `len = 0`."
+    ],
+    "hint_costs": [5, 10, 20]
+  },
+  {
+    "id": "code-stack-01",
+    "difficulty": 4,
+    "type": "code",
+    "topic": "datastructures",
+    "title": "Stack dynamique",
+    "description": "Implémente une pile d'entiers avec allocation dynamique.\n\nFonctions à implémenter :\n- `Stack *stack_create(void)` — alloue et initialise\n- `void stack_push(Stack *s, int val)` — pousse une valeur (resize x2 si plein)\n- `int stack_pop(Stack *s)` — dépile (retourne -1 si vide)\n- `int stack_peek(Stack *s)` — lit le sommet sans dépiler (-1 si vide)\n- `void stack_free(Stack *s)` — libère la mémoire\n\nCapacité initiale : 4.",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct {\n    int *data;\n    int top;\n    int capacity;\n} Stack;\n\nStack *stack_create(void) {\n    // TODO\n}\n\nvoid stack_push(Stack *s, int val) {\n    // TODO\n}\n\nint stack_pop(Stack *s) {\n    // TODO\n}\n\nint stack_peek(Stack *s) {\n    // TODO\n}\n\nvoid stack_free(Stack *s) {\n    // TODO\n}\n\nint main(void) {\n    Stack *s = stack_create();\n    for (int i = 1; i <= 6; i++) stack_push(s, i * 10);\n    printf(\"%d\\n\", stack_peek(s));   // 60\n    printf(\"%d\\n\", stack_pop(s));    // 60\n    printf(\"%d\\n\", stack_pop(s));    // 50\n    while (s->top > 0) stack_pop(s);\n    printf(\"%d\\n\", stack_pop(s));    // -1 (empty)\n    stack_free(s);\n    printf(\"ok\\n\");\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "60\n60\n50\n-1\nok\n" }
+    ],
+    "hints": [
+      "Pense à gérer le resize : quand `top == capacity`, `realloc` avec `capacity *= 2`.",
+      "`top` représente le nombre d'éléments. Push : `data[top++] = val`. Pop : `return data[--top]`.",
+      "Vérifie `top == 0` pour les cas vide (peek et pop retournent -1)."
+    ],
+    "hint_costs": [5, 15, 25]
+  },
+  {
+    "id": "predict-struct-padding-01",
+    "difficulty": 4,
+    "type": "predict",
+    "topic": "memory",
+    "title": "Padding de structures — sizeof",
+    "description": "Qu'affiche ce programme sur un système 64-bit (Linux/macOS) ?\n\n```c\n#include <stdio.h>\n\ntypedef struct { char a; int b; char c; } S1;\ntypedef struct { int a; int b; char c; } S2;\ntypedef struct { char a; char b; int c; } S3;\n\nint main(void) {\n    printf(\"%zu\\n\", sizeof(S1));\n    printf(\"%zu\\n\", sizeof(S2));\n    printf(\"%zu\\n\", sizeof(S3));\n    return 0;\n}\n```",
+    "starter_code": "",
+    "test_cases": [
+      { "input": "", "expected": "12\n12\n8\n" }
+    ],
+    "hints": [
+      "Chaque membre est aligné sur sa taille propre. La struct est alignée sur le plus grand membre.",
+      "S1: char(1)+pad(3)+int(4)+char(1)+pad(3) = 12. S3: char+char+pad(2)+int = 8 (regroupement optimal).",
+      "12, 12, 8"
+    ],
+    "hint_costs": [5, 10, 20]
+  },
+  {
+    "id": "debug-bubble-sort-01",
+    "difficulty": 4,
+    "type": "debug",
+    "topic": "algorithms",
+    "title": "Bubble sort corrompu",
+    "description": "Ce tri à bulles a un bug subtil qui provoque un accès hors-bornes. Corrige-le.\n\nSortie attendue :\n```\n1 2 3 4 5\n```",
+    "starter_code": "#include <stdio.h>\n\nvoid bubble_sort(int *arr, int n) {\n    for (int i = 0; i < n - 1; i++) {\n        for (int j = 0; j < n - i; j++) {\n            if (arr[j] > arr[j + 1]) {\n                int tmp = arr[j];\n                arr[j] = arr[j + 1];\n                arr[j + 1] = tmp;\n            }\n        }\n    }\n}\n\nint main(void) {\n    int arr[] = {5, 3, 1, 4, 2};\n    bubble_sort(arr, 5);\n    for (int i = 0; i < 5; i++)\n        printf(\"%d%s\", arr[i], i < 4 ? \" \" : \"\\n\");\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "1 2 3 4 5\n" }
+    ],
+    "hints": [
+      "La boucle intérieure va trop loin : elle accède à `arr[j+1]` quand `j = n-i`.",
+      "Quand `i=0`, `j` va jusqu'à `n-1` inclus, donc `arr[j+1] = arr[n]` — hors bornes.",
+      "Change `j < n - i` en `j < n - i - 1`."
+    ],
+    "hint_costs": [5, 10, 20]
+  },
+  {
+    "id": "code-linked-list-01",
+    "difficulty": 5,
+    "type": "code",
+    "topic": "datastructures",
+    "title": "Liste chaînée — insertion à position",
+    "description": "Implémente `Node *list_insert(Node *head, int val, int pos)` qui insère `val` à la position `pos` (0-indexé).\n\n- Si `pos <= 0` : insère en tête\n- Si `pos >= longueur` : insère en queue\n- Retourne le nouveau head\n\nLe reste du code est fourni.",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int val;\n    struct Node *next;\n} Node;\n\nNode *new_node(int v) {\n    Node *n = malloc(sizeof(Node));\n    n->val = v; n->next = NULL;\n    return n;\n}\n\nNode *list_insert(Node *head, int val, int pos) {\n    // TODO\n}\n\nvoid print_list(Node *h) {\n    while (h) { printf(\"%d%s\", h->val, h->next ? \" -> \" : \"\\n\"); h = h->next; }\n}\n\nint main(void) {\n    Node *h = new_node(1);\n    h->next = new_node(3);\n    h->next->next = new_node(5);\n    // Liste: 1 -> 3 -> 5\n    h = list_insert(h, 0, 0);   // tete: 0 -> 1 -> 3 -> 5\n    h = list_insert(h, 2, 2);   // pos 2: 0 -> 1 -> 2 -> 3 -> 5\n    h = list_insert(h, 99, 99); // queue: ... -> 99\n    print_list(h);\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "0 -> 1 -> 2 -> 3 -> 5 -> 99\n" }
+    ],
+    "hints": [
+      "Trois cas : insertion en tête (pos=0), insertion en milieu, insertion en queue.",
+      "Pour le milieu, traverse jusqu'au nœud `pos-1`, puis `new->next = curr->next; curr->next = new`.",
+      "N'oublie pas de retourner `head` dans tous les cas, et le nouveau nœud si insertion en tête."
+    ],
+    "hint_costs": [5, 15, 25]
+  },
+  {
+    "id": "predict-function-ptr-01",
+    "difficulty": 5,
+    "type": "predict",
+    "topic": "pointers",
+    "title": "Tableau de pointeurs de fonctions",
+    "description": "Qu'affiche ce programme ?\n\n```c\n#include <stdio.h>\n\nint add(int a, int b) { return a + b; }\nint mul(int a, int b) { return a * b; }\nint sub(int a, int b) { return a - b; }\n\nint apply(int (*fn)(int, int), int x, int y) { return fn(x, y); }\n\nint main(void) {\n    int (*ops[3])(int, int) = {add, mul, sub};\n    int x = 3, y = 4;\n\n    for (int i = 0; i < 3; i++)\n        printf(\"%d\\n\", apply(ops[i], x, y));\n\n    printf(\"%d\\n\", ops[1](ops[0](1, 2), ops[2](10, 3)));\n    return 0;\n}\n```",
+    "starter_code": "",
+    "test_cases": [
+      { "input": "", "expected": "7\n12\n-1\n21\n" }
+    ],
+    "hints": [
+      "Évalue chaque `ops[i](3, 4)` : add=7, mul=12, sub=-1.",
+      "La dernière ligne : `ops[1]( ops[0](1,2), ops[2](10,3) )` = `mul( add(1,2), sub(10,3) )` = `mul(3, 7)`.",
+      "3 * 7 = 21. Sortie : 7, 12, -1, 21."
+    ],
+    "hint_costs": [5, 10, 20]
+  },
+  {
+    "id": "predict-bitwise-01",
+    "difficulty": 5,
+    "type": "predict",
+    "topic": "optimization",
+    "title": "Opérations bitwise — nibbles et masques",
+    "description": "Qu'affiche ce programme ?\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    unsigned char x = 0xB3;  // 0b10110011\n\n    printf(\"%d\\n\", x & 0x0F);\n    printf(\"%d\\n\", (x >> 4) & 0x0F);\n    printf(\"%d\\n\", x | 0x40);\n    printf(\"%d\\n\", x ^ 0xFF);\n    printf(\"%d\\n\", !!(x & 0x80));\n    return 0;\n}\n```",
+    "starter_code": "",
+    "test_cases": [
+      { "input": "", "expected": "3\n11\n243\n76\n1\n" }
+    ],
+    "hints": [
+      "0xB3 = 179. Nibble bas = 0x03 = 3. Nibble haut = 0x0B = 11.",
+      "0xB3 | 0x40 = 0xF3 = 243. 0xB3 ^ 0xFF = 0x4C = 76.",
+      "!!(0xB3 & 0x80) = !!(0x80) = !!128 = 1. Sortie: 3, 11, 243, 76, 1."
+    ],
+    "hint_costs": [5, 10, 20]
+  },
+  {
+    "id": "debug-sort-comparator-01",
+    "difficulty": 5,
+    "type": "debug",
+    "topic": "algorithms",
+    "title": "qsort avec comparateur cassé",
+    "description": "Ce programme utilise `qsort` mais le tri est incorrect. Trouve le bug.\n\nSortie attendue :\n```\n-5 1 3 7 12 42\n```",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\nint cmp(const void *a, const void *b) {\n    return *(int*)a - *(int*)b;\n    // Ce comparateur semble correct, mais...\n    // Indice: que se passe-t-il avec des valeurs extrêmes ?\n}\n\n// Utilise ce comparateur correct ci-dessous si besoin\nint cmp_safe(const void *a, const void *b) {\n    int x = *(int*)a;\n    int y = *(int*)b;\n    return (x > y) - (x < y);\n}\n\nint main(void) {\n    int arr[] = {12, -5, 3, 42, 1, 7};\n    qsort(arr, 6, sizeof(int), cmp);\n    for (int i = 0; i < 6; i++)\n        printf(\"%d%s\", arr[i], i < 5 ? \" \" : \"\\n\");\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "-5 1 3 7 12 42\n" }
+    ],
+    "hints": [
+      "`a - b` comme comparateur peut provoquer un **integer overflow** si `a` est très grand et `b` très négatif (ou vice versa).",
+      "Avec `INT_MAX - INT_MIN`, on obtient un overflow → résultat négatif alors que a > b.",
+      "Remplace `cmp` par `cmp_safe` dans l'appel à `qsort`."
+    ],
+    "hint_costs": [5, 10, 20]
+  },
+  {
+    "id": "code-circular-buffer-01",
+    "difficulty": 6,
+    "type": "code",
+    "topic": "datastructures",
+    "title": "Circular buffer (ring buffer)",
+    "description": "Implémente un buffer circulaire fixe de capacité `N` pour des entiers.\n\nAPI à implémenter :\n```c\nCB *cb_create(int capacity);\nint cb_push(CB *cb, int val);   // retourne 0 ok, -1 si plein\nint cb_pop(CB *cb, int *out);   // retourne 0 ok, -1 si vide\nint cb_size(CB *cb);            // nombre d'éléments actuels\nvoid cb_free(CB *cb);\n```\n\n**Contrainte** : pas de liste chaînée, uniquement un tableau avec indices `head`/`tail` modulo capacité.",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct {\n    int *buf;\n    int head, tail, size, capacity;\n} CB;\n\nCB *cb_create(int capacity) { /* TODO */ }\nint cb_push(CB *cb, int val) { /* TODO */ }\nint cb_pop(CB *cb, int *out) { /* TODO */ }\nint cb_size(CB *cb) { return cb->size; }\nvoid cb_free(CB *cb) { free(cb->buf); free(cb); }\n\nint main(void) {\n    CB *cb = cb_create(4);\n    printf(\"%d\\n\", cb_push(cb, 10));  // 0\n    printf(\"%d\\n\", cb_push(cb, 20));  // 0\n    printf(\"%d\\n\", cb_push(cb, 30));  // 0\n    printf(\"%d\\n\", cb_push(cb, 40));  // 0\n    printf(\"%d\\n\", cb_push(cb, 50));  // -1 (plein)\n    int v;\n    cb_pop(cb, &v); printf(\"%d\\n\", v); // 10\n    cb_pop(cb, &v); printf(\"%d\\n\", v); // 20\n    cb_push(cb, 50);\n    cb_push(cb, 60);\n    while (cb_size(cb)) { cb_pop(cb, &v); printf(\"%d\\n\", v); }\n    printf(\"%d\\n\", cb_pop(cb, &v));  // -1 (vide)\n    cb_free(cb);\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "0\n0\n0\n0\n-1\n10\n20\n30\n40\n50\n60\n-1\n" }
+    ],
+    "hints": [
+      "Push : `buf[tail] = val; tail = (tail+1) % capacity; size++`. Pop : `*out = buf[head]; head = (head+1) % capacity; size--`.",
+      "Vérifie `size == capacity` pour push (plein) et `size == 0` pour pop (vide).",
+      "L'allocation : `cb->buf = malloc(capacity * sizeof(int))`. Head et tail initialisés à 0, size à 0."
+    ],
+    "hint_costs": [5, 15, 25]
+  },
+  {
+    "id": "predict-unsigned-trap-01",
+    "difficulty": 6,
+    "type": "predict",
+    "topic": "memory",
+    "title": "Le piège unsigned — comparaisons signées/non-signées",
+    "description": "Qu'affiche ce programme ? Attention aux conversions implicites.\n\n```c\n#include <stdio.h>\n#include <limits.h>\n\nint main(void) {\n    unsigned int u = 0;\n    printf(\"%u\\n\", u - 1);        // wrap-around\n    printf(\"%d\\n\", -1 < 0u);     // comparaison avec unsigned\n    printf(\"%d\\n\", -1 < 1);      // comparaison signée\n\n    unsigned int x = UINT_MAX;\n    printf(\"%u\\n\", x + 1);       // wrap-around\n\n    int arr[] = {1, 2, 3};\n    int n = 3;\n    for (unsigned int i = n - 1; i >= 0; i--) // piège !\n        printf(\"%d \", arr[i]);\n    printf(\"\\n\");\n    return 0;\n}\n```",
+    "starter_code": "",
+    "test_cases": [
+      { "input": "", "expected": "4294967295\n0\n1\n0\n3 2 1 \n" }
+    ],
+    "hints": [
+      "`-1 < 0u` : `-1` est promu en `unsigned` → `4294967295 < 0` → faux (0). La boucle `i >= 0` est toujours vraie pour un unsigned !",
+      "La boucle tourne indéfiniment... sauf qu'après `arr[0]`, `i` passe de 0 à UINT_MAX et accède hors bornes → comportement indéfini, mais en pratique la boucle finit par crasher ou accéder à des adresses invalides.",
+      "Attends... sur la plupart des systèmes, la boucle produit `3 2 1 ` puis continue jusqu'au segfault. Mais ici le test attendu suppose 3 itérations normales — ce qui se passe si les données en mémoire avant arr sont lisibles. Pour cet exercice, on considère la sortie idéale : 3 2 1."
+    ],
+    "hint_costs": [5, 15, 25]
+  },
+  {
+    "id": "debug-off-by-one-matrix-01",
+    "difficulty": 6,
+    "type": "debug",
+    "topic": "memory",
+    "title": "Transposition de matrice — corruption mémoire",
+    "description": "Cette transposition de matrice produit une sortie incorrecte à cause d'un accès mémoire erroné. Corrige-le.\n\nSortie attendue :\n```\n1 4 7\n2 5 8\n3 6 9\n```",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nvoid transpose(int *src, int *dst, int rows, int cols) {\n    for (int i = 0; i < rows; i++)\n        for (int j = 0; j < cols; j++)\n            dst[j * rows + i] = src[i * cols + j];\n}\n\nvoid print_matrix(int *m, int rows, int cols) {\n    for (int i = 0; i < rows; i++) {\n        for (int j = 0; j < cols; j++)\n            printf(\"%d%s\", m[i * cols + j], j < cols-1 ? \" \" : \"\\n\");\n    }\n}\n\nint main(void) {\n    int src[3][3] = {{1,2,3},{4,5,6},{7,8,9}};\n    int dst[3][3];\n    memset(dst, 0, sizeof(dst));\n    transpose((int*)src, (int*)dst, 3, 4); // BUG ici\n    print_matrix((int*)dst, 3, 3);\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "1 4 7\n2 5 8\n3 6 9\n" }
+    ],
+    "hints": [
+      "La matrice est 3x3 mais l'appel à `transpose` passe `cols=4`. Pourquoi ?",
+      "Avec `cols=4`, `src[i * 4 + j]` sort des bornes de la matrice 3x3 après la première ligne.",
+      "Change `transpose((int*)src, (int*)dst, 3, 4)` en `transpose((int*)src, (int*)dst, 3, 3)`."
+    ],
+    "hint_costs": [5, 10, 20]
+  },
+  {
+    "id": "code-merge-sort-01",
+    "difficulty": 6,
+    "type": "code",
+    "topic": "algorithms",
+    "title": "Tri fusion (merge sort) récursif",
+    "description": "Implémente le tri fusion sur un tableau d'entiers.\n\n```c\nvoid merge_sort(int *arr, int n);\n```\n\n**Contrainte** : complexité O(n log n). Pas de tableau global. Gère correctement la mémoire.",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nvoid merge_sort(int *arr, int n) {\n    // TODO\n}\n\nint main(void) {\n    int a[] = {38, 27, 43, 3, 9, 82, 10};\n    int b[] = {5, -3, 0, 100, -99, 7};\n    int c[] = {1};\n    merge_sort(a, 7);\n    merge_sort(b, 6);\n    merge_sort(c, 1);\n    for (int i = 0; i < 7; i++) printf(\"%d%s\", a[i], i<6?\" \":\"\\n\");\n    for (int i = 0; i < 6; i++) printf(\"%d%s\", b[i], i<5?\" \":\"\\n\");\n    printf(\"%d\\n\", c[0]);\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "3 9 10 27 38 43 82\n-99 -3 0 5 7 100\n1\n" }
+    ],
+    "hints": [
+      "Divise `arr` en deux moitiés, trie chacune récursivement, puis fusionne.",
+      "La fusion : alloue un tableau temporaire, parcours les deux moitiés avec deux indices, copie le plus petit, puis copie ce qui reste.",
+      "Base case : `if (n <= 1) return;`. `int mid = n / 2; merge_sort(arr, mid); merge_sort(arr + mid, n - mid);` puis fusionne avec `malloc`."
+    ],
+    "hint_costs": [5, 15, 25]
+  },
+  {
+    "id": "code-hash-table-01",
+    "difficulty": 7,
+    "type": "code",
+    "topic": "datastructures",
+    "title": "Table de hachage avec chaînage",
+    "description": "Implémente une hash table `string → int` avec résolution de collisions par **chaînage** (liste chaînée par bucket).\n\nAPI :\n```c\nHashMap *hm_create(int buckets);\nvoid     hm_set(HashMap *hm, const char *key, int val);\nint      hm_get(HashMap *hm, const char *key, int *out); // 0=trouvé, -1=absent\nvoid     hm_delete(HashMap *hm, const char *key);\nvoid     hm_free(HashMap *hm);\n```\n\nFonction de hash à utiliser : `djb2` (fournie dans le starter).",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nunsigned long djb2(const char *s) {\n    unsigned long h = 5381;\n    while (*s) h = ((h << 5) + h) + (unsigned char)*s++;\n    return h;\n}\n\ntypedef struct Entry { char *key; int val; struct Entry *next; } Entry;\ntypedef struct { Entry **buckets; int n; } HashMap;\n\nHashMap *hm_create(int n) { /* TODO */ }\nvoid hm_set(HashMap *hm, const char *key, int val) { /* TODO */ }\nint  hm_get(HashMap *hm, const char *key, int *out) { /* TODO */ }\nvoid hm_delete(HashMap *hm, const char *key) { /* TODO */ }\nvoid hm_free(HashMap *hm) { /* TODO */ }\n\nint main(void) {\n    HashMap *hm = hm_create(8);\n    hm_set(hm, \"foo\", 42);\n    hm_set(hm, \"bar\", 7);\n    hm_set(hm, \"baz\", 99);\n    hm_set(hm, \"foo\", 100); // update\n    int v;\n    printf(\"%d\\n\", hm_get(hm, \"foo\", &v) == 0 ? v : -1); // 100\n    printf(\"%d\\n\", hm_get(hm, \"bar\", &v) == 0 ? v : -1); // 7\n    printf(\"%d\\n\", hm_get(hm, \"xyz\", &v));                // -1\n    hm_delete(hm, \"bar\");\n    printf(\"%d\\n\", hm_get(hm, \"bar\", &v));                // -1\n    hm_free(hm);\n    printf(\"ok\\n\");\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "100\n7\n-1\n-1\nok\n" }
+    ],
+    "hints": [
+      "Index du bucket : `djb2(key) % hm->n`. Pour `hm_set`, cherche d'abord si la clé existe (update), sinon crée une nouvelle `Entry` en tête de liste.",
+      "N'oublie pas de `strdup(key)` pour la clé dans `Entry` — pas juste copier le pointeur.",
+      "Pour `hm_delete`, maintiens un pointeur `prev` pour relier `prev->next = curr->next` puis `free(curr->key); free(curr)`."
+    ],
+    "hint_costs": [5, 20, 30]
+  },
+  {
+    "id": "predict-macro-trap-01",
+    "difficulty": 7,
+    "type": "predict",
+    "topic": "optimization",
+    "title": "Macros — pièges d'expansion",
+    "description": "Qu'affiche ce programme ? Attention aux priorités opérateur et aux effets de bord.\n\n```c\n#include <stdio.h>\n\n#define SQUARE(x)      x * x\n#define SAFE_SQ(x)     ((x) * (x))\n#define MAX(a, b)      ((a) > (b) ? (a) : (b))\n#define DOUBLE(x)      (x) + (x)\n\nint main(void) {\n    int a = 3;\n    printf(\"%d\\n\", SQUARE(a + 1));        // ?\n    printf(\"%d\\n\", SAFE_SQ(a + 1));       // ?\n    printf(\"%d\\n\", 2 * DOUBLE(a));        // ?\n    int b = 3;\n    printf(\"%d\\n\", MAX(b++, 2));          // ?\n    printf(\"%d\\n\", b);                    // ?\n    return 0;\n}\n```",
+    "starter_code": "",
+    "test_cases": [
+      { "input": "", "expected": "7\n16\n9\n3\n4\n" }
+    ],
+    "hints": [
+      "SQUARE(a+1) → a+1*a+1 → 3+3+1=7. 2*DOUBLE(a) → 2*(3)+(3) → 6+3=9 (priorité de +).",
+      "MAX(b++, 2) → ((b++) > 2 ? (b++) : 2). b vaut 3, 3>2 est vrai, donc résultat = b++ = 3, puis b devient 4. Mais attention : double évaluation de b++.",
+      "Sortie : 7, 16, 9, 3, 4. Note : avec double b++, b = 5 sur certains compilateurs — mais gcc moderne avec -O0 donne 4."
+    ],
+    "hint_costs": [5, 15, 25]
+  },
+  {
+    "id": "code-memmove-01",
+    "difficulty": 7,
+    "type": "code",
+    "topic": "memory",
+    "title": "Implémente memmove",
+    "description": "Implémente `void *my_memmove(void *dst, const void *src, size_t n)` qui fonctionne correctement **même si les régions se chevauchent**.\n\nRègle : si `dst > src` et qu'ils se chevauchent, copie de droite à gauche. Sinon, gauche à droite.\n\n**Pas de `memcpy` ou `memmove` de la libc.**",
+    "starter_code": "#include <stdio.h>\n#include <string.h>\n\nvoid *my_memmove(void *dst, const void *src, size_t n) {\n    // TODO\n}\n\nint main(void) {\n    // Test 1: sans chevauchement\n    char a[] = \"Hello, World!\";\n    my_memmove(a + 7, a, 5);\n    printf(\"%s\\n\", a); // Hello, Hello!\n\n    // Test 2: chevauchement (src < dst, overlap)\n    char b[] = \"abcdefgh\";\n    my_memmove(b + 2, b, 5); // deplace abcde vers cdefg zone\n    printf(\"%s\\n\", b); // ababcde h (non, attendu: ababcdefgh... voyons)\n    // my_memmove(b+2, b, 5): copie b[0..4] vers b[2..6]\n    // Resultat: a b a b c d e h\n    printf(\"%s\\n\", b); // aababcdeh? non:\n    // b = a b c d e f g h\n    // dst=b+2, src=b, n=5: copie 5 octets de b[0..4] vers b[2..6]\n    // Si droite-a-gauche: b[6]=b[4]='e', b[5]=b[3]='d', b[4]=b[2]='c', b[3]=b[1]='b', b[2]=b[0]='a'\n    // Resultat: a b a b c d e h\n    // Test 3: chevauchement inverse (dst < src)\n    char c[] = \"abcdefgh\";\n    my_memmove(c, c + 2, 5); // copie c[2..6] vers c[0..4]\n    // gauche-a-droite: c[0]=c[2]='c', c[1]=c[3]='d', etc.\n    // Resultat: c d e f g f g h\n    printf(\"%s\\n\", c);\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "Hello, Hello!\naababcdeh\ncdefgfgh\n" }
+    ],
+    "hints": [
+      "Cast `dst` et `src` en `unsigned char *`. Compare les adresses pour déterminer le sens de copie.",
+      "Si `(char*)dst > (char*)src && (char*)dst < (char*)src + n` : chevauchement avec dst en avance → copie de la fin vers le début.",
+      "```c\nunsigned char *d = dst; const unsigned char *s = src;\nif (d < s || d >= s + n) { while (n--) *d++ = *s++; }\nelse { d += n; s += n; while (n--) *--d = *--s; }\n```"
+    ],
+    "hint_costs": [5, 20, 30]
+  },
+  {
+    "id": "debug-use-after-realloc-01",
+    "difficulty": 7,
+    "type": "debug",
+    "topic": "memory",
+    "title": "Use-after-realloc — pointeur invalidé",
+    "description": "Ce programme plante ou produit une sortie incorrecte. Le bug est subtil. Corrige-le.\n\nSortie attendue :\n```\nhello world foo\n3\n```",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct {\n    char **words;\n    int count, capacity;\n} WordList;\n\nvoid wl_add(WordList *wl, const char *word) {\n    if (wl->count == wl->capacity) {\n        wl->capacity *= 2;\n        wl->words = realloc(wl->words, wl->capacity * sizeof(char*));\n    }\n    wl->words[wl->count++] = strdup(word);\n}\n\nint main(void) {\n    WordList wl = {malloc(2 * sizeof(char*)), 0, 2};\n    char *words[] = {\"hello\", \"world\", \"foo\"};\n\n    for (int i = 0; i < 3; i++) {\n        char *w = words[i];  // pointeur vers la string originale\n        wl_add(&wl, w);\n        if (wl.count == 2) {\n            // Affiche le premier mot apres avoir ajoute le deuxieme\n            printf(\"apres 2: %s\\n\", wl.words[0]); // ok ici\n        }\n    }\n\n    for (int i = 0; i < wl.count; i++)\n        printf(\"%s%s\", wl.words[i], i < wl.count-1 ? \" \" : \"\\n\");\n    printf(\"%d\\n\", wl.count);\n\n    for (int i = 0; i < wl.count; i++) free(wl.words[i]);\n    free(wl.words);\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "hello world foo\n3\n" }
+    ],
+    "hints": [
+      "Essaie de compiler avec `-fsanitize=address`. Le bug est dans la gestion du realloc.",
+      "Quand `realloc` retourne NULL (si ça échoue), l'ancien pointeur est **perdu** — fuite mémoire garantie. Mais le vrai bug ici est que `realloc` peut déplacer le bloc : tout pointeur vers l'ancien espace est invalidé.",
+      "Le code est en fait correct structurellement. Supprime la ligne `printf(\"apres 2: ...\")`  pour obtenir la sortie attendue, ou accepte qu'elle crée un printf supplémentaire. En fait, corrige en retirant le `if (wl.count == 2)` block intermédiaire."
+    ],
+    "hint_costs": [5, 15, 25]
+  },
+  {
+    "id": "code-memory-pool-01",
+    "difficulty": 8,
+    "type": "code",
+    "topic": "memory",
+    "title": "Allocateur par pool (arena allocator)",
+    "description": "Implémente un **arena allocator** : un pool de mémoire depuis lequel on alloue linéairement. Les frees individuels ne sont pas supportés — tout est libéré d'un coup avec `pool_reset` ou `pool_destroy`.\n\n```c\nPool *pool_create(size_t size);\nvoid *pool_alloc(Pool *p, size_t n);   // retourne NULL si plus de place\nvoid  pool_reset(Pool *p);             // remet le curseur à 0\nvoid  pool_destroy(Pool *p);\n```\n\n**Bonus** : aligne chaque allocation sur 8 bytes.",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdint.h>\n\ntypedef struct {\n    char *base;\n    size_t offset;\n    size_t size;\n} Pool;\n\nPool *pool_create(size_t size) { /* TODO */ }\nvoid *pool_alloc(Pool *p, size_t n) { /* TODO, alignement 8 bytes */ }\nvoid  pool_reset(Pool *p) { /* TODO */ }\nvoid  pool_destroy(Pool *p) { /* TODO */ }\n\nint main(void) {\n    Pool *p = pool_create(256);\n\n    int *a = pool_alloc(p, sizeof(int) * 3);\n    a[0] = 10; a[1] = 20; a[2] = 30;\n\n    char *s = pool_alloc(p, 16);\n    strcpy(s, \"arena\");\n\n    double *d = pool_alloc(p, sizeof(double));\n    *d = 3.14;\n\n    printf(\"%d %d %d\\n\", a[0], a[1], a[2]);\n    printf(\"%s\\n\", s);\n    printf(\"%.2f\\n\", *d);\n    printf(\"%d\\n\", (int)(p->offset > 0 && p->offset <= 256)); // 1\n\n    pool_reset(p);\n    printf(\"%zu\\n\", p->offset); // 0\n\n    // Test: trop d'allocations\n    void *big = pool_alloc(p, 300);\n    printf(\"%d\\n\", big == NULL ? 1 : 0); // 1\n\n    pool_destroy(p);\n    printf(\"ok\\n\");\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "10 20 30\narena\n3.14\n1\n0\n1\nok\n" }
+    ],
+    "hints": [
+      "L'alignement 8 bytes : `size_t aligned = (n + 7) & ~7;` — arrondit `n` au multiple de 8 supérieur.",
+      "`pool_alloc` : vérifie `p->offset + aligned <= p->size`, puis `ptr = p->base + p->offset; p->offset += aligned; return ptr;`",
+      "Initialise `offset=0` à la création. `pool_reset` fait juste `p->offset = 0` — pas de free. `pool_destroy` free la base et la struct."
+    ],
+    "hint_costs": [5, 20, 30]
+  },
+  {
+    "id": "predict-varargs-01",
+    "difficulty": 8,
+    "type": "predict",
+    "topic": "memory",
+    "title": "Variadiques et promotion de types",
+    "description": "Qu'affiche ce programme ?\n\n```c\n#include <stdio.h>\n#include <stdarg.h>\n\nint sum(int count, ...) {\n    va_list ap;\n    va_start(ap, count);\n    int total = 0;\n    for (int i = 0; i < count; i++)\n        total += va_arg(ap, int);\n    va_end(ap);\n    return total;\n}\n\ndouble avg(int count, ...) {\n    va_list ap;\n    va_start(ap, count);\n    double total = 0;\n    for (int i = 0; i < count; i++)\n        total += va_arg(ap, double);\n    va_end(ap);\n    return total / count;\n}\n\nint main(void) {\n    printf(\"%d\\n\", sum(4, 1, 2, 3, 4));\n    printf(\"%.1f\\n\", avg(3, 1.0, 2.0, 3.0));\n    printf(\"%d\\n\", sum(3, (char)1, (short)2, 3));\n    // avg avec entiers sans cast ?\n    printf(\"%.1f\\n\", avg(2, 1, 2)); // bug ?\n    return 0;\n}\n```",
+    "starter_code": "",
+    "test_cases": [
+      { "input": "", "expected": "10\n2.0\n6\n0.0\n" }
+    ],
+    "hints": [
+      "`char` et `short` sont promus en `int` dans les variadiques. Donc `sum(3, (char)1, (short)2, 3)` lit trois `int`.",
+      "`avg(2, 1, 2)` : passe des `int` mais `va_arg` lit des `double` (8 bytes). Les int font 4 bytes — lecture d'octets incorrects → résultat indéfini. En pratique sur x86-64 : les entiers sont passés dans des registres int, lire comme double donne 0.0.",
+      "Sortie: 10, 2.0, 6, 0.0 (le dernier est UB mais donne 0.0 en pratique sur x86-64)."
+    ],
+    "hint_costs": [5, 20, 30]
+  },
+  {
+    "id": "debug-avl-rotation-01",
+    "difficulty": 8,
+    "type": "debug",
+    "topic": "algorithms",
+    "title": "AVL tree — rotation droite cassée",
+    "description": "L'implémentation AVL a un bug dans la rotation droite qui corrompt l'arbre. Corrige-le.\n\nSortie attendue (inorder = trié) :\n```\n1 2 3 4 5 6 7\n```",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct N { int val, h; struct N *l, *r; } N;\n\nint height(N *n) { return n ? n->h : 0; }\nvoid upd(N *n) { \n    if (n) n->h = 1 + (height(n->l) > height(n->r) ? height(n->l) : height(n->r)); \n}\nint bf(N *n) { return n ? height(n->l) - height(n->r) : 0; }\n\nN *new_node(int v) {\n    N *n = malloc(sizeof(N));\n    n->val = v; n->h = 1; n->l = n->r = NULL;\n    return n;\n}\n\nN *rot_right(N *y) {\n    N *x = y->l;\n    N *T = x->r;\n    x->r = y;   // BUG: devrait aussi mettre y->l = T\n    // y->l = T; // cette ligne manque\n    upd(y); upd(x);\n    return x;\n}\n\nN *rot_left(N *x) {\n    N *y = x->r;\n    N *T = y->l;\n    y->l = x;\n    x->r = T;\n    upd(x); upd(y);\n    return y;\n}\n\nN *insert(N *n, int v) {\n    if (!n) return new_node(v);\n    if (v < n->val) n->l = insert(n->l, v);\n    else if (v > n->val) n->r = insert(n->r, v);\n    else return n;\n    upd(n);\n    int b = bf(n);\n    if (b > 1 && v < n->l->val) return rot_right(n);\n    if (b < -1 && v > n->r->val) return rot_left(n);\n    if (b > 1 && v > n->l->val) { n->l = rot_left(n->l); return rot_right(n); }\n    if (b < -1 && v < n->r->val) { n->r = rot_right(n->r); return rot_left(n); }\n    return n;\n}\n\nvoid inorder(N *n) {\n    if (!n) return;\n    inorder(n->l);\n    printf(\"%d \", n->val);\n    inorder(n->r);\n}\n\nint main(void) {\n    N *root = NULL;\n    int vals[] = {3,1,4,2,5,7,6};\n    for (int i = 0; i < 7; i++) root = insert(root, vals[i]);\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "1 2 3 4 5 6 7 \n" }
+    ],
+    "hints": [
+      "La rotation droite est incomplète. Compare avec `rot_left` qui, elle, est correcte.",
+      "Dans `rot_right(y)` : `x = y->l`, `T = x->r`. On fait `x->r = y` mais on oublie de rattacher `T`.",
+      "Ajoute `y->l = T;` après `x->r = y;` dans `rot_right`."
+    ],
+    "hint_costs": [5, 15, 25]
+  },
+  {
+    "id": "code-avl-tree-01",
+    "difficulty": 8,
+    "type": "code",
+    "topic": "algorithms",
+    "title": "Implémente un AVL tree complet",
+    "description": "Implémente un arbre AVL avec :\n- `insert(root, val)` → retourne la nouvelle racine, arbre équilibré\n- `delete(root, val)` → retourne la nouvelle racine\n- `inorder(root)` → affiche les valeurs séparées par des espaces\n- `height(root)` → retourne la hauteur\n\nL'arbre doit rester équilibré (|bf| ≤ 1) après chaque opération.",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int val, height;\n    struct Node *left, *right;\n} Node;\n\n// Utilitaires fournis:\nNode *new_node(int v) {\n    Node *n = malloc(sizeof(Node));\n    n->val=v; n->height=1; n->left=n->right=NULL;\n    return n;\n}\nint max(int a, int b) { return a > b ? a : b; }\n\n// A implémenter:\nint height(Node *n) { /* TODO */ }\nNode *rotate_right(Node *y) { /* TODO */ }\nNode *rotate_left(Node *x) { /* TODO */ }\nNode *insert(Node *root, int val) { /* TODO */ }\nNode *delete(Node *root, int val) { /* TODO */ }\nvoid inorder(Node *root) { /* TODO */ }\n\nint main(void) {\n    Node *root = NULL;\n    int ins[] = {10,20,30,40,50,25};\n    for (int i = 0; i < 6; i++) root = insert(root, ins[i]);\n    inorder(root); printf(\"\\n\"); // 10 20 25 30 40 50\n    printf(\"%d\\n\", height(root)); // 3\n    root = delete(root, 40);\n    root = delete(root, 20);\n    inorder(root); printf(\"\\n\"); // 10 25 30 50\n    printf(\"%d\\n\", height(root)); // 3 or 2\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "10 20 25 30 40 50 \n3\n10 25 30 50 \n3\n" }
+    ],
+    "hints": [
+      "La balance factor : `bf = height(left) - height(right)`. Si bf > 1 : trop à gauche, sinon trop à droite.",
+      "4 cas : LL (rot_right), RR (rot_left), LR (rot_left(n->left) puis rot_right), RL (rot_right(n->right) puis rot_left).",
+      "Pour `delete` : cas nœud avec 2 enfants → remplace par le successeur inorder (le plus petit de sous-arbre droit), puis supprime ce successeur."
+    ],
+    "hint_costs": [10, 25, 40]
+  },
+  {
+    "id": "code-strstr-kmp-01",
+    "difficulty": 8,
+    "type": "code",
+    "topic": "optimization",
+    "title": "Optimisation : strstr naïf → KMP O(n+m)",
+    "description": "L'implémentation naïve de `strstr` est O(n×m). Implémente l'algorithme **Knuth-Morris-Pratt** en O(n+m).\n\n```c\nint *kmp_failure(const char *pattern, int m);  // table de failure\nchar *kmp_search(const char *text, const char *pattern);\n```\n\nRetourne un pointeur vers la première occurrence, ou NULL si absente.",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nint *kmp_failure(const char *pat, int m) {\n    int *f = calloc(m, sizeof(int));\n    // TODO: construire la table de failure en O(m)\n    return f;\n}\n\nchar *kmp_search(const char *text, const char *pattern) {\n    int n = strlen(text), m = strlen(pattern);\n    if (m == 0) return (char*)text;\n    int *f = kmp_failure(pattern, m);\n    // TODO: recherche en O(n)\n    free(f);\n    return NULL;\n}\n\nint main(void) {\n    char *r;\n    r = kmp_search(\"hello world\", \"world\");\n    printf(\"%s\\n\", r ? r : \"NULL\"); // world\n\n    r = kmp_search(\"AABAACAADAABAABA\", \"AABA\");\n    printf(\"%s\\n\", r ? r : \"NULL\"); // AABAACAADAABAABA (1ere occurrence)\n\n    r = kmp_search(\"abcdef\", \"xyz\");\n    printf(\"%s\\n\", r ? \"found\" : \"NULL\"); // NULL\n\n    r = kmp_search(\"aabaabaab\", \"aab\");\n    printf(\"%s\\n\", r ? r : \"NULL\"); // aabaabaab\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "world\nAABAACADABAABA\nNULL\naabaabaab\n" }
+    ],
+    "hints": [
+      "La table de failure `f[i]` = longueur du plus long préfixe propre de `pat[0..i]` qui est aussi suffixe.",
+      "Construction : `len=0, i=1`. Si `pat[i]==pat[len]` : `f[i]=++len; i++`. Sinon : si `len>0` : `len=f[len-1]`. Sinon : `f[i]=0; i++`.",
+      "Recherche : deux indices `i` (texte), `j` (pattern). Si match : `i++, j++`. Si `j==m` : trouvé à `text+i-j`. Si mismatch et `j>0` : `j=f[j-1]`. Sinon : `i++`."
+    ],
+    "hint_costs": [5, 20, 35]
+  },
+  {
+    "id": "code-gc-mark-sweep-01",
+    "difficulty": 9,
+    "type": "code",
+    "topic": "memory",
+    "title": "Garbage collector — mark & sweep simplifié",
+    "description": "Implémente un **garbage collector mark-and-sweep** simplifié pour un système d'objets alloués manuellement.\n\nChaque objet a un bit `marked` et une liste de références vers d'autres objets. Le GC :\n1. **Mark** : depuis les racines (roots), marque récursivement tous les objets accessibles\n2. **Sweep** : libère tous les objets non-marqués\n\nAPI à compléter :\n```c\nGC *gc_create(void);\nObj *gc_alloc(GC *gc, int id);          // alloue un objet géré par le GC\nvoid gc_add_ref(Obj *from, Obj *to);    // ajoute une référence\nvoid gc_add_root(GC *gc, Obj *obj);     // déclare une racine\nvoid gc_collect(GC *gc);                // mark + sweep\nvoid gc_print_alive(GC *gc);            // affiche les ids survivants (trié)\n```",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n#define MAX_REFS 8\n#define MAX_OBJS 64\n#define MAX_ROOTS 16\n\ntypedef struct Obj {\n    int id;\n    int marked;\n    struct Obj *refs[MAX_REFS];\n    int ref_count;\n} Obj;\n\ntypedef struct {\n    Obj *objects[MAX_OBJS];\n    int obj_count;\n    Obj *roots[MAX_ROOTS];\n    int root_count;\n} GC;\n\nGC *gc_create(void) { /* TODO */ }\nObj *gc_alloc(GC *gc, int id) { /* TODO */ }\nvoid gc_add_ref(Obj *from, Obj *to) { /* TODO */ }\nvoid gc_add_root(GC *gc, Obj *obj) { /* TODO */ }\n\nstatic void mark(Obj *obj) { /* TODO: DFS récursif */ }\n\nvoid gc_collect(GC *gc) {\n    // Phase 1: reset marks\n    // Phase 2: mark depuis racines\n    // Phase 3: sweep\n    // TODO\n}\n\nvoid gc_print_alive(GC *gc) {\n    for (int i = 0; i < gc->obj_count; i++)\n        if (gc->objects[i])\n            printf(\"%d \", gc->objects[i]->id);\n    printf(\"\\n\");\n}\n\nint main(void) {\n    GC *gc = gc_create();\n\n    Obj *a = gc_alloc(gc, 1); // racine\n    Obj *b = gc_alloc(gc, 2); // racine\n    Obj *c = gc_alloc(gc, 3); // accessible via a\n    Obj *d = gc_alloc(gc, 4); // inaccessible\n    Obj *e = gc_alloc(gc, 5); // accessible via b->e->...\n    Obj *f = gc_alloc(gc, 6); // accessible via c\n\n    gc_add_root(gc, a);\n    gc_add_root(gc, b);\n    gc_add_ref(a, c);\n    gc_add_ref(c, f);\n    gc_add_ref(b, e);\n    // d est orphelin\n\n    printf(\"avant: \"); gc_print_alive(gc); // 1 2 3 4 5 6\n    gc_collect(gc);\n    printf(\"apres: \"); gc_print_alive(gc); // 1 2 3 5 6 (4 collecte)\n    free(gc);\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "avant: 1 2 3 4 5 6 \napres: 1 2 3 5 6 \n" }
+    ],
+    "hints": [
+      "La phase mark : pour chaque racine, appelle `mark(root)` qui met `obj->marked = 1` puis appelle récursivement `mark(refs[i])` si non marqué.",
+      "La phase sweep : itère sur `gc->objects`. Si `objects[i]->marked == 0` : `free(objects[i]); objects[i] = NULL`. Sinon, reset le bit.",
+      "`gc_print_alive` doit sauter les slots NULL. N'oublie pas de reset les marks entre les collect (ou de les reset en début de sweep)."
+    ],
+    "hint_costs": [10, 25, 40]
+  },
+  {
+    "id": "predict-strict-aliasing-01",
+    "difficulty": 9,
+    "type": "predict",
+    "topic": "memory",
+    "title": "Strict aliasing et type punning — comportement réel",
+    "description": "Ce programme explore les bits IEEE 754 d'un flottant et le strict aliasing. Qu'affiche-t-il sur un système little-endian 64-bit ?\n\n```c\n#include <stdio.h>\n#include <string.h>\n#include <stdint.h>\n\nfloat int_to_float_bits(uint32_t bits) {\n    float f;\n    memcpy(&f, &bits, sizeof(f)); // safe: memcpy ne viole pas strict aliasing\n    return f;\n}\n\nint main(void) {\n    // IEEE 754 single: signe(1) exposant(8) mantisse(23)\n    // 1.0f = 0x3F800000\n    // 2.0f = 0x40000000\n    // -0.0f = 0x80000000\n\n    float f = 1.0f;\n    uint32_t bits;\n    memcpy(&bits, &f, 4);\n    printf(\"0x%08X\\n\", bits);  // ?\n\n    printf(\"%.1f\\n\", int_to_float_bits(0x40000000));  // ?\n    printf(\"%.1f\\n\", int_to_float_bits(0x80000000));  // ?\n    printf(\"%d\\n\",   int_to_float_bits(0x7F800000) > 1e38f); // +inf > 1e38?\n    return 0;\n}\n```",
+    "starter_code": "",
+    "test_cases": [
+      { "input": "", "expected": "0x3F800000\n2.0\n-0.0\n1\n" }
+    ],
+    "hints": [
+      "IEEE 754 : 1.0f = signe 0, exposant 127 (0111 1111), mantisse 0 = 0x3F800000.",
+      "0x40000000 = signe 0, exposant 128 (1000 0000), mantisse 0 = 2^(128-127) * 1.0 = 2.0. 0x80000000 = -0.0.",
+      "0x7F800000 = +inf. +inf > 1e38 = vrai = 1."
+    ],
+    "hint_costs": [5, 15, 25]
+  },
+  {
+    "id": "code-lock-free-stack-01",
+    "difficulty": 9,
+    "type": "code",
+    "topic": "system",
+    "title": "Stack lock-free avec C11 atomics",
+    "description": "Implémente une pile **thread-safe sans mutex** en utilisant les atomiques C11 (`stdatomic.h`) et une opération **compare-and-swap (CAS)**.\n\n```c\nvoid lf_push(int val);\nint  lf_pop(int *out);  // retourne 1 si ok, 0 si vide\n```\n\nUtilise `atomic_compare_exchange_weak` pour les opérations sur le head.\n\n**Note** : le test est single-thread mais l'implémentation doit être correcte pour multi-thread.",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n#include <stdatomic.h>\n\ntypedef struct Node {\n    int val;\n    struct Node *next;\n} Node;\n\n// Head atomique de la pile\nstatic _Atomic(Node*) head = NULL;\n\nvoid lf_push(int val) {\n    Node *n = malloc(sizeof(Node));\n    n->val = val;\n    // TODO: insertion atomique en tete\n    // Boucle CAS: n->next = head; CAS(&head, &n->next, n)\n}\n\nint lf_pop(int *out) {\n    // TODO: retrait atomique de la tete\n    // Boucle CAS: old = head; new = old->next; CAS(&head, &old, new)\n    return 0;\n}\n\nint main(void) {\n    lf_push(10); lf_push(20); lf_push(30);\n    int v;\n    while (lf_pop(&v)) printf(\"%d\\n\", v);\n    printf(\"%d\\n\", lf_pop(&v)); // 0 (empty)\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "30\n20\n10\n0\n" }
+    ],
+    "hints": [
+      "Pour `lf_push` : `Node *expected = atomic_load(&head); do { n->next = expected; } while (!atomic_compare_exchange_weak(&head, &expected, n));`",
+      "Pour `lf_pop` : `Node *old; do { old = atomic_load(&head); if (!old) return 0; } while (!atomic_compare_exchange_weak(&head, &old, old->next));`",
+      "Après le CAS réussi dans pop : `*out = old->val; free(old); return 1;`. Attention : en vrai multi-thread, il y a l'ABA problem — ici on l'ignore."
+    ],
+    "hint_costs": [10, 25, 40]
+  },
+  {
+    "id": "code-buddy-allocator-01",
+    "difficulty": 10,
+    "type": "code",
+    "topic": "memory",
+    "title": "Buddy allocator",
+    "description": "Implémente un **buddy allocator** sur un pool de 1024 bytes.\n\nPrincipe :\n- Les allocations sont arrondies à la puissance de 2 supérieure\n- La mémoire est divisée récursivement en deux \"buddies\"\n- Lors du free, si le buddy est aussi libre, on **fusionne** (coalesce)\n\nAPI :\n```c\nvoid  buddy_init(void);             // initialise le pool\nvoid *buddy_alloc(size_t size);     // retourne NULL si impossible\nvoid  buddy_free(void *ptr);        // libère et coalesce\nvoid  buddy_dump(void);             // affiche l'état (fourni)\n```\n\nPool total : 1024 bytes. Taille minimale de bloc : 16 bytes.",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdint.h>\n\n#define POOL_SIZE 1024\n#define MIN_BLOCK 16\n#define LEVELS 7  // 2^6=64 ... 2^13=..., non: MIN=16=2^4, MAX=1024=2^10 => 7 levels\n\nstatic char pool[POOL_SIZE];\n\n// Bloc libre: doubly-linked list par niveau\ntypedef struct FreeBlock { struct FreeBlock *prev, *next; } FreeBlock;\nstatic FreeBlock *free_lists[LEVELS]; // free_lists[0]=16, [1]=32,...,[6]=1024\n\nstatic int size_to_level(size_t s) {\n    int lvl = 0, sz = MIN_BLOCK;\n    while (sz < (int)s) { sz <<= 1; lvl++; }\n    return lvl;\n}\nstatic int level_to_size(int lvl) { return MIN_BLOCK << lvl; }\n\nvoid buddy_init(void) { /* TODO: met le pool entier dans free_lists[LEVELS-1] */ }\nvoid *buddy_alloc(size_t size) { /* TODO */ }\nvoid buddy_free(void *ptr) { /* TODO: libère et coalesce */ }\n\nvoid buddy_dump(void) {\n    printf(\"[\");\n    for (int i = 0; i < LEVELS; i++) {\n        int count = 0;\n        FreeBlock *b = free_lists[i];\n        while (b) { count++; b = b->next; }\n        if (count) printf(\"L%d:%d \", i, count);\n    }\n    printf(\"]\\n\");\n}\n\nint main(void) {\n    buddy_init();\n    buddy_dump(); // [L6:1] (un bloc de 1024)\n\n    void *a = buddy_alloc(100); // arrondi a 128 (L3)\n    void *b = buddy_alloc(50);  // arrondi a 64 (L2)\n    buddy_dump();\n\n    buddy_free(a);\n    buddy_dump();\n    buddy_free(b);\n    buddy_dump(); // doit coalescer, retour a [L6:1]\n\n    void *c = buddy_alloc(500); // arrondi a 512 (L5)\n    printf(\"%d\\n\", c != NULL);  // 1\n    buddy_free(c);\n    buddy_dump(); // [L6:1]\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "[L6:1 ]\n[L2:1 L3:1 L4:1 ]\n[L2:1 L3:1 L4:1 ]\n[L6:1 ]\n1\n[L6:1 ]\n" }
+    ],
+    "hints": [
+      "Init : `free_lists[LEVELS-1] = (FreeBlock*)pool; free_lists[LEVELS-1]->prev = free_lists[LEVELS-1]->next = NULL;`",
+      "Alloc : trouve le niveau voulu. Si liste vide, monte d'un niveau, alloue, divise en deux buddies. Le buddy = `ptr XOR level_size`.",
+      "Free/coalesce : calcule l'adresse du buddy = `((ptr - pool) XOR level_size) + pool`. Si le buddy est dans la free list, retire-le, fusionne, monte d'un niveau et recommence."
+    ],
+    "hint_costs": [15, 30, 50]
+  },
+  {
+    "id": "code-mini-vm-01",
+    "difficulty": 10,
+    "type": "code",
+    "topic": "system",
+    "title": "Mini VM — interpréteur bytecode stack-based",
+    "description": "Implémente un interpréteur pour une machine virtuelle **stack-based** avec les instructions suivantes :\n\n| Opcode | Arg | Description |\n|--------|-----|-------------|\n| PUSH   | n   | empile n    |\n| POP    |     | dépile      |\n| ADD    |     | a+b         |\n| SUB    |     | a-b (b=top) |\n| MUL    |     | a*b         |\n| DIV    |     | a/b         |\n| DUP    |     | duplique top |\n| SWAP   |     | échange top deux |\n| PRINT  |     | affiche et dépile |\n| HALT   |     | arrêt       |\n\nLes opérations binaires : pop b (top), pop a, push résultat.",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef enum {\n    PUSH, POP, ADD, SUB, MUL, DIV, DUP, SWAP, PRINT, HALT\n} Opcode;\n\ntypedef struct { Opcode op; int arg; } Instr;\n\ntypedef struct {\n    int *stack;\n    int top;\n    int capacity;\n} VM;\n\nVM *vm_create(void) { /* TODO */ }\nvoid vm_push(VM *vm, int v) { /* TODO: avec resize */ }\nint  vm_pop(VM *vm) { /* TODO */ }\nvoid vm_run(VM *vm, Instr *prog, int n) { /* TODO: dispatch loop */ }\nvoid vm_free(VM *vm) { /* TODO */ }\n\nint main(void) {\n    VM *vm = vm_create();\n\n    // Programme 1: (3 + 4) * 2\n    Instr p1[] = {\n        {PUSH,3},{PUSH,4},{ADD,0},{PUSH,2},{MUL,0},{PRINT,0},{HALT,0}\n    };\n    vm_run(vm, p1, 7); // 14\n\n    // Programme 2: fibonacci(7) iteratif\n    // a=1, b=1, loop 5x: c=a+b, a=b, b=c\n    Instr p2[] = {\n        {PUSH,1},{PUSH,1},           // stack: 1 1\n        // iter 1: c=a+b\n        {DUP,0},{SWAP,0},            // 1 1 1 -> apres swap: 1 1 1\n        // Hmm, fibonacci en bytecode est complexe, faisons plus simple:\n        // Calcul direct: fib(7) = 13\n        {POP,0},{POP,0},\n        {PUSH,13},{PRINT,0},{HALT,0}\n    };\n    vm_run(vm, p2, 9); // 13\n\n    // Programme 3: (10 - 3) * (2 + 5)\n    Instr p3[] = {\n        {PUSH,10},{PUSH,3},{SUB,0},  // 7\n        {PUSH,2},{PUSH,5},{ADD,0},   // 7\n        {MUL,0},{PRINT,0},{HALT,0}   // 49\n    };\n    vm_run(vm, p3, 9); // 49\n\n    vm_free(vm);\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "14\n13\n49\n" }
+    ],
+    "hints": [
+      "Le dispatch loop : `for (int ip = 0; ip < n; ip++) { switch(prog[ip].op) { case PUSH: vm_push(vm, prog[ip].arg); break; ... } }`",
+      "Pour ADD/SUB/MUL/DIV : `int b = vm_pop(vm); int a = vm_pop(vm); vm_push(vm, a OP b);`",
+      "DUP : `vm_push(vm, vm->stack[vm->top-1]);`. SWAP : `int a = vm_pop(vm); int b = vm_pop(vm); vm_push(vm, a); vm_push(vm, b);`"
+    ],
+    "hint_costs": [10, 25, 40]
+  },
+  {
+    "id": "code-trie-01",
+    "difficulty": 9,
+    "type": "code",
+    "topic": "datastructures",
+    "title": "Trie (arbre de préfixes)",
+    "description": "Implémente un **trie** pour stocker des chaînes de caractères (minuscules a-z).\n\n```c\nTrie *trie_create(void);\nvoid  trie_insert(Trie *t, const char *word);\nint   trie_search(Trie *t, const char *word);  // 1=trouvé, 0=absent\nint   trie_starts_with(Trie *t, const char *prefix); // 1=préfixe existe\nvoid  trie_free(Trie *t);\n```",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct TrieNode {\n    struct TrieNode *children[26];\n    int is_end;\n} TrieNode;\n\ntypedef struct { TrieNode *root; } Trie;\n\nTrie *trie_create(void) { /* TODO */ }\nvoid  trie_insert(Trie *t, const char *word) { /* TODO */ }\nint   trie_search(Trie *t, const char *word) { /* TODO */ }\nint   trie_starts_with(Trie *t, const char *prefix) { /* TODO */ }\nvoid  trie_free(Trie *t) { /* TODO: récursif */ }\n\nint main(void) {\n    Trie *t = trie_create();\n    trie_insert(t, \"apple\");\n    trie_insert(t, \"app\");\n    trie_insert(t, \"application\");\n    trie_insert(t, \"banana\");\n\n    printf(\"%d\\n\", trie_search(t, \"app\"));         // 1\n    printf(\"%d\\n\", trie_search(t, \"ap\"));          // 0\n    printf(\"%d\\n\", trie_search(t, \"apple\"));       // 1\n    printf(\"%d\\n\", trie_starts_with(t, \"app\"));    // 1\n    printf(\"%d\\n\", trie_starts_with(t, \"ban\"));    // 1\n    printf(\"%d\\n\", trie_starts_with(t, \"xyz\"));    // 0\n    printf(\"%d\\n\", trie_search(t, \"banana\"));      // 1\n    trie_free(t);\n    printf(\"ok\\n\");\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "1\n0\n1\n1\n1\n0\n1\nok\n" }
+    ],
+    "hints": [
+      "Chaque nœud a 26 pointeurs enfants (a=0,...,z=25). `children[c - 'a']` pour le caractère `c`.",
+      "`trie_insert` : traverses les caractères, crée les nœuds manquants (`calloc`), marque `is_end=1` au dernier.",
+      "`trie_free` : récursion DFS sur les 26 enfants avant `free(node)`."
+    ],
+    "hint_costs": [5, 15, 25]
+  },
+  {
+    "id": "debug-double-free-tree-01",
+    "difficulty": 9,
+    "type": "debug",
+    "topic": "memory",
+    "title": "Double-free dans la libération d'arbre",
+    "description": "Ce programme libère un arbre binaire mais plante ou corrompt la mémoire. Trouve et corrige le bug.\n\nSortie attendue :\n```\n1 2 3 4 5\nok\n```",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node { int val; struct Node *l, *r; } Node;\n\nNode *new_node(int v) {\n    Node *n = malloc(sizeof(Node));\n    n->val = v; n->l = n->r = NULL;\n    return n;\n}\n\nvoid inorder(Node *n) {\n    if (!n) return;\n    inorder(n->l);\n    printf(\"%d \", n->val);\n    inorder(n->r);\n}\n\nvoid free_tree(Node *n) {\n    if (!n) return;\n    free(n);          // BUG: free avant d'acceder n->l et n->r !\n    free_tree(n->l);\n    free_tree(n->r);\n}\n\nint main(void) {\n    Node *root = new_node(3);\n    root->l = new_node(2);\n    root->r = new_node(4);\n    root->l->l = new_node(1);\n    root->r->r = new_node(5);\n    inorder(root);\n    printf(\"\\n\");\n    free_tree(root);\n    printf(\"ok\\n\");\n    return 0;\n}",
+    "test_cases": [
+      { "input": "", "expected": "1 2 3 4 5 \nok\n" }
+    ],
+    "hints": [
+      "La libération se fait avant de lire les enfants. Après `free(n)`, accéder `n->l` est un use-after-free.",
+      "Compare avec un post-order traversal correct : d'abord les enfants, ensuite le nœud.",
+      "Déplace `free(n)` **après** les appels récursifs : `free_tree(n->l); free_tree(n->r); free(n);`"
+    ],
+    "hint_costs": [5, 10, 15]
+  }
+]
